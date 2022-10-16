@@ -17,7 +17,7 @@ router.post('/placeorder', async (req, res) => {
     const payment = await stripe.charges.create(
       {
         amount: subtotal * 100,
-        currency: 'INR',
+        currency: 'inr',
         customer: customer.id,
         receipt_email: token.email,
       },
@@ -25,6 +25,7 @@ router.post('/placeorder', async (req, res) => {
         idempotencyKey: uuidv4(),
       }
     );
+    console.log('Payment', payment);
 
     if (payment) {
       const neworder = new Order({
@@ -43,6 +44,7 @@ router.post('/placeorder', async (req, res) => {
       });
 
       neworder.save();
+      // await res.render('course');
 
       res.send('Order placed successfully');
     } else {
