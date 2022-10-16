@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
-const stripe = require('stripe')(process.env.STRIPE_KEY);
+const stripe = require('stripe')(
+  'sk_test_51LtTItSJh9CuAb2XbU9A5uo0hIMtqoQurFb5Bgb0PMNrJoYa6IktlCLYa6uttRSXmmytRspp0ykm7L49uSvXsANo00J1sCBjPp'
+);
 const Order = require('../models/orderModel');
 router.post('/placeorder', async (req, res) => {
   const { token, subtotal, currentUser, cartItems } = req.body;
@@ -15,7 +17,7 @@ router.post('/placeorder', async (req, res) => {
     const payment = await stripe.charges.create(
       {
         amount: subtotal * 100,
-        currency: 'inr',
+        currency: 'INR',
         customer: customer.id,
         receipt_email: token.email,
       },

@@ -1,4 +1,5 @@
 const express = require('express');
+require('dotenv').config();
 
 const Pizza = require('./models/pizzaModel');
 
@@ -17,10 +18,16 @@ app.use(
   })
 );
 
+app.get('/', (req, res) => {
+  res.send('Web server started running');
+});
+
 const pizzasRoute = require('./routes/pizzasRoute');
 const userRoute = require('./routes/userRoute');
 const ordersRoute = require('./routes/ordersRoute');
+const seedRoute = require('./routes/seedRoute');
 
+app.use('/api/seed', seedRoute);
 app.use('/api/pizzas/', pizzasRoute);
 app.use('/api/users/', userRoute);
 app.use('/api/orders/', ordersRoute);
@@ -35,4 +42,6 @@ app.use('/api/orders/', ordersRoute);
 
 const port = process.env.PORT || 8000;
 
-app.listen(port, () => console.log(`Server running on port port 🔥`));
+app.listen(port, () =>
+  console.log(`Server running on port http://localhost:${port} 🔥`)
+);
