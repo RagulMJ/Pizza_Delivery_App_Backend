@@ -1,3 +1,4 @@
+const bcrypt = require('bcryptjs');
 const pizza = {
   data: [
     {
@@ -94,7 +95,7 @@ const pizza = {
     {
       name: 'admin',
       email: 'admin@example.com',
-      password: '123456',
+      password: bcrypt.hashSync('123456'),
       isAdmin: true,
     },
   ],
