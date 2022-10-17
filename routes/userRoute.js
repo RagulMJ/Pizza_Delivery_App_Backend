@@ -2,6 +2,7 @@ const express = require('express');
 const bcrypt = require('bcryptjs');
 const router = express.Router();
 const User = require('../models/userModel');
+const jwt = require('jsonwebtoken');
 const { generateToken } = require('../utils.js');
 const expressAsyncHandler = require('express-async-handler');
 
@@ -34,7 +35,18 @@ router.post('/login', async (req, res) => {
           email: user.email,
           isAdmin: user.isAdmin,
           _id: user._id,
-          // token: generateToken(user),
+          token: jwt.sign(
+            {
+              _id: user._id,
+              name: user.name,
+              email: user.email,
+              isAdmin: user.isAdmin,
+            },
+            process.env.JWT_SECRET,
+            {
+              expiresIn: '30d',
+            }
+          ),
         });
         return;
       }
