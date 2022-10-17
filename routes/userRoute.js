@@ -3,6 +3,7 @@ const bcrypt = require('bcryptjs');
 const router = express.Router();
 const User = require('../models/userModel');
 const { generateToken } = require('../utils.js');
+const expressAsyncHandler = require('express-async-handler');
 
 router.post('/register', async (req, res) => {
   const { name, email, password } = req.body;
@@ -14,7 +15,7 @@ router.post('/register', async (req, res) => {
   });
 
   try {
-    const user = await newUser.save();
+    await newUser.save();
     res.send('User Registered successfully');
   } catch (error) {
     return res.status(400).json({ message: error });
@@ -25,22 +26,24 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.findOne({ email });
-
+    const user = await User.find({ email });
     if (user) {
-      const currentUser = {
-        name: user[0].name,
-        email: user[0].email,
-        isAdmin: user[0].isAdmin,
-        _id: user[0]._id,
-        token: generateToken(user),
-      };
-      res.send(currentUser);
+      if (bcrypt.compareSync(password, user[0].password)) {
+        const currentUser = {};
+        res.send({
+          name: user[0].name,
+          email: user[0].email,
+          isAdmin: user[0].isAdmin,
+          _id: user[0]._id,
+          // token: generateToken(user),
+        });
+        return;
+      }
     } else {
       return res.status(400).json({ message: 'User Login Failed' });
     }
   } catch (error) {
-    return res.status(400).json({ message: 'Something went wrong' });
+    return res.status(400).json({ message: 'Something went wrong here' });
   }
 });
 
