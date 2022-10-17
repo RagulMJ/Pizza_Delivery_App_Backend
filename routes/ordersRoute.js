@@ -1,9 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const { v4: uuidv4 } = require('uuid');
-const stripe = require('stripe')(
-  'sk_test_51LtTItSJh9CuAb2XbU9A5uo0hIMtqoQurFb5Bgb0PMNrJoYa6IktlCLYa6uttRSXmmytRspp0ykm7L49uSvXsANo00J1sCBjPp'
-);
+const stripe = require('stripe')(process.env.STRIPE_KEY);
 const Order = require('../models/orderModel');
 router.post('/placeorder', async (req, res) => {
   const { token, subtotal, currentUser, cartItems } = req.body;
@@ -25,7 +23,6 @@ router.post('/placeorder', async (req, res) => {
         idempotencyKey: uuidv4(),
       }
     );
-    console.log('Payment', payment);
 
     if (payment) {
       const neworder = new Order({
@@ -44,7 +41,6 @@ router.post('/placeorder', async (req, res) => {
       });
 
       neworder.save();
-      // await res.render('course');
 
       res.send('Order placed successfully');
     } else {
