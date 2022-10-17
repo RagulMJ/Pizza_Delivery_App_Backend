@@ -26,16 +26,15 @@ router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    const user = await User.find({ email });
+    const user = await User.findOne({ email });
     if (user) {
-      if (bcrypt.compareSync(password, user[0].password)) {
-        const currentUser = {};
+      if (bcrypt.compareSync(password, user.password)) {
         res.send({
-          name: user[0].name,
-          email: user[0].email,
-          isAdmin: user[0].isAdmin,
-          _id: user[0]._id,
-          token: generateToken(user[0]),
+          name: user.name,
+          email: user.email,
+          isAdmin: user.isAdmin,
+          _id: user._id,
+          // token: generateToken(user),
         });
         return;
       }
